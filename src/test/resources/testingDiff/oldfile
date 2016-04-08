@@ -1,0 +1,16 @@
+package lu.jimenez.research.vulnerabilityprediction.collection.utils
+
+object Constants {
+    val NB_THREAD = 8
+    val SOFTWARE = "linux_kernel"
+
+    //CVE XML
+    val YEAR_BEGINNING = 2002
+    val YEAR_END = 2016
+
+    //Ratio of Clear File
+    var CLEARRATIO = 1
+    //Software to lookfor
+    var SOFTWARE_GIT = ".*?(github\\.com|git\\.kernel\\.org).*?(commit)+.*?(h\\=|/)+([a-z0-9]+)"
+    var soft=1
+}
