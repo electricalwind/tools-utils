@@ -1,9 +1,9 @@
 package lu.jimenez.research.bugsandvulnerabilities.utils
 
-import lu.jimenez.research.bugsandvulnerabilities.model.internal.Document
 import org.jetbrains.spek.api.Spek
 import org.junit.Assert.*
 import java.io.File
+import java.io.Serializable
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //                 University of Luxembourg  - 
@@ -30,6 +30,7 @@ import java.io.File
 //    Author: Matthieu Jimenez – SnT – matthieu.jimenez@uni.lu 
 //
 //////////////////////////////////////////////////////////////////////////////////////////
+data class Document(val fullPath: String, val time: Int, val commitHash: String, val content: String) : Serializable
 
 /**
  * Serialization object test class

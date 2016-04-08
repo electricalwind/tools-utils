@@ -1,7 +1,7 @@
 Bugs And Vulnerabilities project
 ===============================
 
-Model module
+Utils module
 --------------
 
 This maven module gather all utilitary methods that are used across all the different modules and that could be used in other context
@@ -15,7 +15,7 @@ This maven module gather all utilitary methods that are used across all the diff
    
 ### Tests 
 
-This module is almost fully tested
+
 
 ### Note
 
