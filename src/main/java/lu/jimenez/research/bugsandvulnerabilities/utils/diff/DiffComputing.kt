@@ -23,7 +23,7 @@
 //    Author: Matthieu Jimenez – SnT – matthieu.jimenez@uni.lu
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-package lu.jimenez.research.bugsandvulnerabilities.utils
+package lu.jimenez.research.bugsandvulnerabilities.utils.diff
 
 
 
@@ -71,10 +71,10 @@ object DiffComputing {
      *
      * @return [DeltaHistory]
      */
-    fun computeDelta(oldFile: String, newFile: String): DeltaHistory{
+    fun computeDelta(oldFile: String, newFile: String): DeltaHistory {
         val listoldFile = oldFile.split("\n")
         val listnewFile = newFile.split("\n")
-        return computeDelta(listoldFile,listnewFile)
+        return computeDelta(listoldFile, listnewFile)
     }
     /**
      * Function to compute the delta

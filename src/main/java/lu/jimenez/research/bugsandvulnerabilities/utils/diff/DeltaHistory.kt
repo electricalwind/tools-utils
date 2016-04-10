@@ -23,7 +23,7 @@
 //    Author: Matthieu Jimenez – SnT – matthieu.jimenez@uni.lu
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-package lu.jimenez.research.bugsandvulnerabilities.utils
+package lu.jimenez.research.bugsandvulnerabilities.utils.diff
 
 import java.io.Serializable
 

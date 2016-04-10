@@ -23,40 +23,19 @@
 //    Author: Matthieu Jimenez – SnT – matthieu.jimenez@uni.lu
 //
 //////////////////////////////////////////////////////////////////////////////////////////
-package lu.jimenez.research.bugsandvulnerabilities.utils
+package lu.jimenez.research.bugsandvulnerabilities.utils.git
 
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.shouldBeTrue
-import org.jetbrains.spek.api.shouldEqual
+import java.io.Serializable
 
-class DiffComputingTest : Spek() {
-    init {
-        given("a block of code in version 1 and version 2 ") {
-            val codev1 =
-                    """
-import antlr.C.ModuleLexer
-import ast.ASTNode
-import ast.functionDef.FunctionDef
-        """
-            val codev2 =
-                    """
-import antlr.C.ModuleLexer
-import ast.ASTNode
-import ast.functionDef.FunctionDef
-import lu.jimenez.research.filemetrics.ast.TestASTWalker
-        """
-            on("computing the diff") {
-                val res = DiffComputing.computeDiff(codev1, codev2, "import")
-                it("should return a unified diff"){
-                    shouldBeTrue(res.contains("+import"))
-                }
-            }
-            on("computing Delta"){
-                val delta = DiffComputing.computeDelta(codev1,codev2)
-                it("should return a delta of 1,0,0"){
-                    shouldEqual(DeltaHistory(1),delta)
-                }
-            }
-        }
-    }
-}
+/**
+ * Developer History Data Class
+ *
+ * This class correspond to the developper history
+ *
+ * @property numberOfChanges number of change that has been made to the file to this date
+ * @property totalNumberOfDeveloper number of Developer that have worked on this file
+ * @property currentNumberOfDeveloper number of Developer that have worked on the current version of this file (git blame)
+ *
+ * @author Matthieu Jimenez
+ */
+data class DeveloperHistory(val totalNumberOfDeveloper: Int = 0, val currentNumberOfDeveloper: Int = 0, val numberOfChanges: Int = 0) : Serializable
