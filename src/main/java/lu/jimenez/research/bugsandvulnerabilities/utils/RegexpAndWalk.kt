@@ -59,12 +59,12 @@ object RegexpAndWalk {
      * Method to generate the list of File present in a directory and its subdirectory with the given extension
      *
      * @param folder repository to analyze
-     * @param extension file extension
+     * @param extension file extension (default = C files)
      *
      * @return List<String> list of the files
      */
-    fun recursiveListOfFilesOfADirectory(folder: String): List<String> {
-        val pattern = Pattern.compile(".*\\.c$");
+    fun recursiveListOfFilesOfADirectory(folder: String, extension : String =".*\\.c$"): List<String> {
+        val pattern = Pattern.compile(extension);
         try {
             return File(folder).walk().asSequence().filter { path -> path.isFile }.map { path -> path.toString()}
                     .map { path -> path.replace(folder,"") }

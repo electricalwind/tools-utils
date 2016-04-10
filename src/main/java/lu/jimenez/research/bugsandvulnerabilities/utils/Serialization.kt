@@ -154,7 +154,7 @@ object Serialization {
         val fileIn = FileInputStream(path)
         val read = ObjectInputStream(fileIn)
         try {
-            val listFile = read.readObject() as Map<String, Any>?
+            val listFile = read.readObject() as Map<String, Any>
             read.close()
             fileIn.close()
             return listFile
