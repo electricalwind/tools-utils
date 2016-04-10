@@ -34,7 +34,7 @@ import java.util.concurrent.Executors
 /**
  * Object gathering methods for launching a function in a multithreaded way
  */
-object Multithreading {
+object MultiThreading {
 
     /**
      * Method to launch a function on a list in a Multithreaded way

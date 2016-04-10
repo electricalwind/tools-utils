@@ -29,7 +29,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.shouldBeTrue
 import org.jetbrains.spek.api.shouldEqual
 
-class MultithreadingTest : Spek() {
+class MultiThreadingTest : Spek() {
     init {
         given("a list") {
             val list = listOf<Int>(4, 6, 8, 10, 12)
@@ -38,7 +38,7 @@ class MultithreadingTest : Spek() {
                     return a + 2
                 }
 
-                val res = Multithreading.onFunctionWithSingleOutput(list, { a -> f(a) }, 2)
+                val res = MultiThreading.onFunctionWithSingleOutput(list, { a -> f(a) }, 2)
                 it("should return a list of size 5") {
                     shouldEqual(5, res.size)
                 }
@@ -52,7 +52,7 @@ class MultithreadingTest : Spek() {
                 return listOf(a, a)
             }
 
-            val res = Multithreading.onFunctionWithListOutput(list, { a -> f(a) }, 2)
+            val res = MultiThreading.onFunctionWithListOutput(list, { a -> f(a) }, 2)
             it("should return a list of size 10") {
                 shouldEqual(10, res.size)
             }
