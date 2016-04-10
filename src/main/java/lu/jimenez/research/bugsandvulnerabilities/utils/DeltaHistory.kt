@@ -25,38 +25,23 @@
 //////////////////////////////////////////////////////////////////////////////////////////
 package lu.jimenez.research.bugsandvulnerabilities.utils
 
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.shouldBeTrue
-import org.jetbrains.spek.api.shouldEqual
+import java.io.Serializable
 
-class DiffComputingTest : Spek() {
-    init {
-        given("a block of code in version 1 and version 2 ") {
-            val codev1 =
-                    """
-import antlr.C.ModuleLexer
-import ast.ASTNode
-import ast.functionDef.FunctionDef
-        """
-            val codev2 =
-                    """
-import antlr.C.ModuleLexer
-import ast.ASTNode
-import ast.functionDef.FunctionDef
-import lu.jimenez.research.filemetrics.ast.TestASTWalker
-        """
-            on("computing the diff") {
-                val res = DiffComputing.computeDiff(codev1, codev2, "import")
-                it("should return a unified diff"){
-                    shouldBeTrue(res.contains("+import"))
-                }
-            }
-            on("computing Delta"){
-                val delta = DiffComputing.computeDelta(codev1,codev2)
-                it("should return a delta of 1,0,0"){
-                    shouldEqual(DeltaHistory(1),delta)
-                }
-            }
-        }
+/**
+ * Delta History Data class
+ *
+ * Class representing the delta history of a file
+ *
+ * @property linesAdded number of lines that were added
+ * @property linesDeleted number of lines that were deleted
+ * @property linesModified number of lines that where modified
+ *
+ * @author Matthieu Jimenez
+ */
+data class DeltaHistory(var linesAdded: Int = 0, var linesDeleted: Int = 0, var linesModified: Int = 0) : Serializable {
+    fun sum(delta: DeltaHistory) {
+        this.linesAdded += delta.linesAdded
+        this.linesDeleted += delta.linesDeleted
+        this.linesModified += delta.linesModified
     }
 }

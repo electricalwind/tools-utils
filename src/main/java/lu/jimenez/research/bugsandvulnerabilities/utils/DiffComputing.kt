@@ -45,10 +45,9 @@ object DiffComputing {
 
     /**
      * Function to compute a unified diff
-
+     *
      * @param oldFile : previous version of the file
      * @param newFile : new version of the file
-     *
      * @param name    : name of the file
      *
      * @return unified diff in string format
@@ -63,4 +62,43 @@ object DiffComputing {
         }
         return diff
     }
+
+    /**
+     * Function to compute the delta
+     *
+     * @param oldFile : previous version of the file
+     * @param newFile : new version of the file
+     *
+     * @return [DeltaHistory]
+     */
+    fun computeDelta(oldFile: String, newFile: String): DeltaHistory{
+        val listoldFile = oldFile.split("\n")
+        val listnewFile = newFile.split("\n")
+        return computeDelta(listoldFile,listnewFile)
+    }
+    /**
+     * Function to compute the delta
+     *
+     * @param oldFile : previous version of the file
+     * @param newFile : new version of the file
+     *
+     * @return [DeltaHistory]
+     */
+    fun computeDelta(oldFile: List<String>, newFile: List<String>): DeltaHistory {
+        val listDelta = difflib.DiffUtils.diff(oldFile, newFile).deltas
+        var lineAdded = 0
+        var lineModified = 0
+        var lineDeleted = 0
+        listDelta.forEach { delta ->
+            when (delta.type) {
+                difflib.Delta.TYPE.DELETE -> lineDeleted += delta.original.lines.size
+                difflib.Delta.TYPE.CHANGE -> lineModified += delta.revised.lines.size
+                difflib.Delta.TYPE.INSERT -> lineAdded += delta.revised.lines.size
+                else -> error("wrong delta type")
+            }
+        }
+        return DeltaHistory(lineAdded, lineDeleted, lineModified)
+    }
+
+
 }
