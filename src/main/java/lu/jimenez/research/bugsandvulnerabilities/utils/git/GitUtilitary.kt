@@ -60,18 +60,18 @@ import java.util.*
  * @author Matthieu Jimenez
  */
 class GitUtilitary(val pathToRepo: String)  {
-    var repo : Repository? =null
-    var git : Git? =null
+    val repo : Repository
+    val git : Git
 
     /**
-     * Method to open the git repository
+     * init open the git repository
      * should always be followed by a call to close when not needed anymore
      *
-     * @throws FileNotFoundException if no git directory was found
+     * @throws [FileNotFoundException] if no git directory was found
      */
-    fun open(){
+    init{
         git = Git.open(File(pathToRepo)) ?: throw FileNotFoundException("Can't manage to find the .git file")
-        repo = git?.repository
+        repo = git.repository
     }
 
 
@@ -88,7 +88,7 @@ class GitUtilitary(val pathToRepo: String)  {
      * @throws NoSuchElementException
      */
     fun retrievingFileFromSpecificCommit(commit: String, path: String): String {
-        val treeId = repo?.resolve("$commit^{tree}") ?: throw NoSuchElementException("the hash commit can not be resolved")
+        val treeId = repo.resolve("$commit^{tree}") ?: throw NoSuchElementException("the hash commit can not be resolved")
 
         val treeWalk = TreeWalk(repo)
         treeWalk.addTree(treeId)
@@ -98,7 +98,7 @@ class GitUtilitary(val pathToRepo: String)  {
             throw FileNotFoundException("Did not find expected file" + path)
         }
         val objectId = treeWalk.getObjectId(0)
-        val loader = repo?.open(objectId)
+        val loader = repo.open(objectId)
         val baos = ByteArrayOutputStream()
         loader?.copyTo(baos)
         return baos.toString("UTF-8")
@@ -117,11 +117,11 @@ class GitUtilitary(val pathToRepo: String)  {
         val listOfCommits = ArrayList<NamedCommit>()
         try {
 
-            var head: ObjectId? = repo?.resolve(beforeThisCommit)
+            var head: ObjectId? = repo.resolve(beforeThisCommit)
             var path: String? = filePath
             var start = RevWalk(repo).parseCommit(head)
             do {
-                val log = git?.log()?.add(head)?.addPath(path)?.call() ?:return listOfCommits
+                val log = git.log()?.add(head)?.addPath(path)?.call() ?:return listOfCommits
                 for (revcom in log) {
                     var alreadyExisting = false
                     listOfCommits.forEach { commit -> if (commit.revCommit == revcom) alreadyExisting = true }
@@ -149,7 +149,7 @@ class GitUtilitary(val pathToRepo: String)  {
      */
     fun getRenamedPath(start: RevCommit, path: String?): String? {
         val  endTimeMillis = System.currentTimeMillis() + 10000;
-        git?.log()?.add(start)?.call()?.forEach { commit ->
+        git.log()?.add(start)?.call()?.forEach { commit ->
             if(System.currentTimeMillis() > endTimeMillis) {
                 return null;}
             val tw = TreeWalk(repo)
@@ -182,7 +182,7 @@ class GitUtilitary(val pathToRepo: String)  {
     fun previousCommitImpactingAFile(filePath: String, beforeThisCommit: String = "HEAD"): NamedCommit? {
         try {
             val revWalk = RevWalk(repo)
-            val commitId = repo?.resolve(beforeThisCommit)
+            val commitId = repo.resolve(beforeThisCommit)
             val commit = revWalk.parseCommit(commitId)
             val listOfCommits = ArrayList<NamedCommit>()
             var head: ObjectId = commitId!!
@@ -190,7 +190,7 @@ class GitUtilitary(val pathToRepo: String)  {
             var start = RevWalk(repo).parseCommit(head)
             listOfCommits.add(NamedCommit(filePath, commit))
             do {
-                val log = git?.log()?.add(head)?.addPath(path)?.call() ?:return null
+                val log = git.log()?.add(head)?.addPath(path)?.call() ?:return null
                 for (revcom in log) {
                     var alreadyExisting = false
                     listOfCommits.forEach { commit -> if (commit.revCommit == revcom) alreadyExisting = true }
@@ -333,9 +333,9 @@ class GitUtilitary(val pathToRepo: String)  {
         try {
             val oldTreeIter = CanonicalTreeParser()
             val newTreeIter = CanonicalTreeParser()
-            val treeIDnew = repo?.resolve(hash + "^{tree}")
-            val treeIDold = repo?.resolve(hash + "~1^{tree}")
-            val reader = repo?.newObjectReader()
+            val treeIDnew = repo.resolve(hash + "^{tree}")
+            val treeIDold = repo.resolve(hash + "~1^{tree}")
+            val reader = repo.newObjectReader()
 
             oldTreeIter.reset(reader, treeIDold)
             newTreeIter.reset(reader, treeIDnew)
@@ -363,7 +363,7 @@ class GitUtilitary(val pathToRepo: String)  {
      */
     fun getCommitMessage(hash: String): String {
         val revWalk = RevWalk(repo)
-        val commitId = repo?.resolve(hash)
+        val commitId = repo.resolve(hash)
         val commit = revWalk.parseCommit(commitId)
         return commit.fullMessage
     }
@@ -373,7 +373,7 @@ class GitUtilitary(val pathToRepo: String)  {
      */
     fun getTimeCommit(hash: String): Int {
         val revWalk = RevWalk(repo)
-        val commitId = repo?.resolve(hash)
+        val commitId = repo.resolve(hash)
         val commit = revWalk.parseCommit(commitId)
         return commit.commitTime
     }
@@ -382,10 +382,8 @@ class GitUtilitary(val pathToRepo: String)  {
      * Method to be called when work on git has been done
      */
     fun close(){
-        repo?.close()
-        git?.close()
-        repo= null
-        git = null
+        repo.close()
+        git.close()
     }
 
     data class NamedCommit(val filePath: String, val revCommit: RevCommit)
