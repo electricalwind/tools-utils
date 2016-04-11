@@ -98,4 +98,17 @@ object RegexpAndWalk {
                     map
                 })
     }
+
+    /**
+     * Function to verify if a message contains a keywords
+     *
+     * @param message message to consider
+     * @param listOfKeywords list of the keywords
+     *
+     * @return [Boolean]
+     */
+    fun containsAKeyword(message : String, listOfKeywords :List<String>):Boolean{
+        listOfKeywords.forEach { key -> if(message.contains(key)) return true }
+        return false
+    }
 }
