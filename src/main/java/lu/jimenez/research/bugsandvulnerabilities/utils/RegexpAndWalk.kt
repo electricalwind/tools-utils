@@ -100,6 +100,37 @@ object RegexpAndWalk {
     }
 
     /**
+     * Function to remove all C style comment from a file
+     *
+     * @param content file
+     *
+     * @return String without the comment
+     */
+    fun contentWithoutComment(content : String):String{
+        val fc = content.split("\n") as MutableList
+        val lines = fc.size
+        var i = 0
+        var deletingMode = false
+        while (i < lines){
+            if (deletingMode){
+                if (fc[i].contains("*/")){
+                    deletingMode =false
+                }
+                fc[i]=""
+            }
+            if (fc[i].contains("/*")){
+                deletingMode = true
+                fc[i]=""
+            }
+            if(fc[i].contains("//")){
+                fc[i]= fc[i].split("//")[0]
+            }
+            i++
+        }
+        return fc.joinToString("\n")
+    }
+
+    /**
      * Function to verify if a message contains a keywords
      *
      * @param message message to consider
