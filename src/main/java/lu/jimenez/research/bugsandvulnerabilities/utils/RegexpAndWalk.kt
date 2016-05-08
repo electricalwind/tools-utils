@@ -30,7 +30,6 @@ import java.io.IOException
 import java.util.regex.Pattern
 
 
-
 /**
  * Object gathering method based on regexp or walking directory
  */
@@ -63,11 +62,11 @@ object RegexpAndWalk {
      *
      * @return List<String> list of the files
      */
-    fun recursiveListOfFilesOfADirectory(folder: String, extension : String =".*\\.c$"): List<String> {
+    fun recursiveListOfFilesOfADirectory(folder: String, extension: String = ".*\\.c$"): List<String> {
         val pattern = Pattern.compile(extension);
         try {
-            return File(folder).walk().asSequence().filter { path -> path.isFile }.map { path -> path.toString()}
-                    .map { path -> path.replace(folder,"") }
+            return File(folder).walk().asSequence().filter { path -> path.isFile }.map { path -> path.toString() }
+                    .map { path -> path.replace(folder, "") }
                     .filter { path -> pattern.matcher(path).find() }
                     .toMutableList()
         } catch (e: IOException) {
@@ -85,18 +84,9 @@ object RegexpAndWalk {
      */
     fun slicingWord(file: String): Map<String, Int> {
         val listWord = file.split(Regex("\\W+"))
-        return listWord.asSequence()
-                .filter {word -> !word.equals("") && !word.contains("0x") }
-                .filter {word -> !word.matches(Regex("[0-9]+")) && word.length > 1  }
-                .fold(mutableMapOf<String,Int>(),{
-                    map, item ->
-                    if (!map.containsKey(item)) {
-                        map.put(item, 1)
-                    } else {
-                        map.put(item, map[item]!! + 1)
-                    }
-                    map
-                })
+        return mapOfFrequency(listWord
+                .filter { word -> !word.equals("") && !word.contains("0x") }
+                .filter { word -> !word.matches(Regex("[0-9]+")) && word.length > 1 })
     }
 
     /**
@@ -109,17 +99,8 @@ object RegexpAndWalk {
      */
     fun slicingWordWithoutFilter(file: String): Map<String, Int> {
         val listWord = file.split(Regex("\\W+"))
-        return listWord.asSequence()
-                .filter {word -> !word.equals("") }
-                .fold(mutableMapOf<String,Int>(),{
-                    map, item ->
-                    if (!map.containsKey(item)) {
-                        map.put(item, 1)
-                    } else {
-                        map.put(item, map[item]!! + 1)
-                    }
-                    map
-                })
+        return mapOfFrequency(listWord
+                .filter { word -> !word.equals("") })
     }
 
     /**
@@ -129,24 +110,24 @@ object RegexpAndWalk {
      *
      * @return String without the comment
      */
-    fun contentWithoutComment(content : String):String{
+    fun contentWithoutComment(content: String): String {
         val fc = content.split("\n") as MutableList
         val lines = fc.size
         var i = 0
         var deletingMode = false
-        while (i < lines){
-            if (deletingMode){
-                if (fc[i].contains("*/")){
-                    deletingMode =false
+        while (i < lines) {
+            if (deletingMode) {
+                if (fc[i].contains("*/")) {
+                    deletingMode = false
                 }
-                fc[i]=""
+                fc[i] = ""
             }
-            if (fc[i].contains("/*")){
+            if (fc[i].contains("/*")) {
                 deletingMode = true
-                fc[i]=""
+                fc[i] = ""
             }
-            if(fc[i].contains("//")){
-                fc[i]= fc[i].split("//")[0]
+            if (fc[i].contains("//")) {
+                fc[i] = fc[i].split("//")[0]
             }
             i++
         }
@@ -161,8 +142,27 @@ object RegexpAndWalk {
      *
      * @return [Boolean]
      */
-    fun containsAKeyword(message : String, listOfKeywords :List<String>):Boolean{
-        listOfKeywords.forEach { key -> if(message.contains(key)) return true }
+    fun containsAKeyword(message: String, listOfKeywords: List<String>): Boolean {
+        listOfKeywords.forEach { key -> if (message.contains(key)) return true }
         return false
+    }
+
+    /**
+     * Function to put generate a map of Frequency from a list of String
+     *
+     * @param listOfKeywords list of all the string
+     *
+     * @return map of frequency
+     */
+    fun mapOfFrequency(listOfKeywords: Iterable<String>): Map<String, Int> {
+        return listOfKeywords.fold(mutableMapOf<String, Int>(), {
+            map, item ->
+            if (!map.containsKey(item)) {
+                map.put(item, 1)
+            } else {
+                map.put(item, map[item]!! + 1)
+            }
+            map
+        })
     }
 }
