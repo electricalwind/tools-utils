@@ -100,6 +100,29 @@ object RegexpAndWalk {
     }
 
     /**
+     * Function to slice A string into a bag of words with their number of occurences
+     * without filtering the number and one letter word
+     *
+     * @param file : File content (String)
+     *
+     * @return map of words and their frequency
+     */
+    fun slicingWordWithoutFilter(file: String): Map<String, Int> {
+        val listWord = file.split(Regex("\\W+"))
+        return listWord.asSequence()
+                .filter {word -> !word.equals("") }
+                .fold(mutableMapOf<String,Int>(),{
+                    map, item ->
+                    if (!map.containsKey(item)) {
+                        map.put(item, 1)
+                    } else {
+                        map.put(item, map[item]!! + 1)
+                    }
+                    map
+                })
+    }
+
+    /**
      * Function to remove all C style comment from a file
      *
      * @param content file
