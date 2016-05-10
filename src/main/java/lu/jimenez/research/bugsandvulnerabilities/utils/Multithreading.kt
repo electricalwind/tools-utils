@@ -50,18 +50,16 @@ object MultiThreading {
     fun <I, O> onFunctionWithSingleOutput(list: List<I>, function: (I) -> O, nbThread: Int): List<O> {
         val resultList = ArrayList<O>()
         var errornb = 0
+        val executor = Executors.newFixedThreadPool(nbThread)
+        //Declaring Executors
         try {
-            //Declaring Executors
-            val executor = Executors.newFixedThreadPool(nbThread)
-            val completionService: CompletionService<O> = ExecutorCompletionService(executor)
-
             //Sending
+            val completionService: CompletionService<O> = ExecutorCompletionService(executor)
             var count = 0
             for (item in list) {
                 completionService.submit({ function(item) })
                 count++
             }
-
             //Receiving
             var received = 0
 
@@ -74,9 +72,8 @@ object MultiThreading {
                         resultList.add(result)
                 } catch (e: ExecutionException) {
                     e.printStackTrace()
-                    errornb ++
-                }
-                finally{
+                    errornb++
+                } finally {
                     received++
                     //println("$received / $count")
                 }
@@ -85,6 +82,7 @@ object MultiThreading {
             e.printStackTrace()
         } finally {
             println("error : $errornb")
+            executor.shutdown()
             return resultList
         }
     }
@@ -102,10 +100,9 @@ object MultiThreading {
      */
     fun <I, O> onFunctionWithListOutput(list: List<I>, function: (I) -> List<O>, nbThread: Int): List<O> {
         val resultList = ArrayList<O>()
+        val executor = Executors.newFixedThreadPool(nbThread)
         try {
-
             //Declaring Executors
-            val executor = Executors.newFixedThreadPool(nbThread)
             val completionService: CompletionService<List<O>> = ExecutorCompletionService(executor)
 
             //Sending
@@ -131,6 +128,7 @@ object MultiThreading {
         } catch (e: InterruptedException) {
             e.printStackTrace()
         } finally {
+            executor.shutdown()
             return resultList
         }
     }
