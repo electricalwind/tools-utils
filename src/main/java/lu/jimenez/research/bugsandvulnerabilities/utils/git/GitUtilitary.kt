@@ -49,7 +49,6 @@ import java.io.IOException
 import java.util.*
 
 
-
 /**
  * Git Utilitary class
  *
@@ -59,9 +58,9 @@ import java.util.*
  *
  * @author Matthieu Jimenez
  */
-class GitUtilitary(val pathToRepo: String)  {
-    val repo : Repository
-    val git : Git
+class GitUtilitary(val pathToRepo: String) {
+    val repo: Repository
+    val git: Git
 
     /**
      * init open the git repository
@@ -69,12 +68,10 @@ class GitUtilitary(val pathToRepo: String)  {
      *
      * @throws [FileNotFoundException] if no git directory was found
      */
-    init{
+    init {
         git = Git.open(File(pathToRepo)) ?: throw FileNotFoundException("Can't manage to find the .git file")
         repo = git.repository
     }
-
-
 
 
     /**
@@ -87,7 +84,7 @@ class GitUtilitary(val pathToRepo: String)  {
      * @throws FileNotFoundException
      * @throws NoSuchElementException
      */
-    fun retrievingFileFromSpecificCommit(commit: String, path: String): String {
+    fun retrievingFileFromSpecificCommit(commit: String, path: String): String? {
         val treeId = repo.resolve("$commit^{tree}") ?: throw NoSuchElementException("the hash commit can not be resolved")
 
         val treeWalk = TreeWalk(repo)
@@ -95,7 +92,7 @@ class GitUtilitary(val pathToRepo: String)  {
         treeWalk.isRecursive = true
         treeWalk.filter = PathFilter.create(path)
         if (!treeWalk.next()) {
-            throw FileNotFoundException("Did not find expected file" + path)
+            return null
         }
         val objectId = treeWalk.getObjectId(0)
         val loader = repo.open(objectId)
@@ -121,7 +118,7 @@ class GitUtilitary(val pathToRepo: String)  {
             var path: String? = filePath
             var start = RevWalk(repo).parseCommit(head)
             do {
-                val log = git.log()?.add(head)?.addPath(path)?.call() ?:return listOfCommits
+                val log = git.log()?.add(head)?.addPath(path)?.call() ?: return listOfCommits
                 for (revcom in log) {
                     var alreadyExisting = false
                     listOfCommits.forEach { commit -> if (commit.revCommit == revcom) alreadyExisting = true }
@@ -148,10 +145,11 @@ class GitUtilitary(val pathToRepo: String)  {
      * This function has a timeout of 10s to avoid blocking for too long in large git repository
      */
     fun getRenamedPath(start: RevCommit, path: String?): String? {
-        val  endTimeMillis = System.currentTimeMillis() + 10000;
+        val endTimeMillis = System.currentTimeMillis() + 10000;
         git.log()?.add(start)?.call()?.forEach { commit ->
-            if(System.currentTimeMillis() > endTimeMillis) {
-                return null;}
+            if (System.currentTimeMillis() > endTimeMillis) {
+                return null;
+            }
             val tw = TreeWalk(repo)
             tw.addTree(commit.tree)
             tw.addTree(start.tree)
@@ -190,7 +188,7 @@ class GitUtilitary(val pathToRepo: String)  {
             var start = RevWalk(repo).parseCommit(head)
             listOfCommits.add(NamedCommit(filePath, commit))
             do {
-                val log = git.log()?.add(head)?.addPath(path)?.call() ?:return null
+                val log = git.log()?.add(head)?.addPath(path)?.call() ?: return null
                 for (revcom in log) {
                     var alreadyExisting = false
                     listOfCommits.forEach { commit -> if (commit.revCommit == revcom) alreadyExisting = true }
@@ -228,11 +226,11 @@ class GitUtilitary(val pathToRepo: String)  {
         blamer.setStartCommit(commitID);
         blamer.setFilePath(filePath);
         val blame: BlameResult = blamer.call() ?: throw UnknownError("The Blamer call failed");
-        val lines: Int = retrievingFileFromSpecificCommit(commitID.name, filePath).split("\n").size
+        val lines: Int = retrievingFileFromSpecificCommit(commitID.name, filePath)?.split("\n")?.size ?: 0
         for (i in 0..(lines - 1)) {
-            try{
-                listCommit.add(blame.getSourceCommit(i))}
-            catch(e: ArrayIndexOutOfBoundsException){
+            try {
+                listCommit.add(blame.getSourceCommit(i))
+            } catch(e: ArrayIndexOutOfBoundsException) {
                 return listCommit
             }
         }
@@ -292,7 +290,7 @@ class GitUtilitary(val pathToRepo: String)  {
      * @return [DeltaHistory]
      */
     fun getDeltaFile(filePath: String, commit: String = "HEAD"): DeltaHistory? {
-        val listofCommit = listOfCommitImpactingAFile(filePath, commit) ?:return null
+        val listofCommit = listOfCommitImpactingAFile(filePath, commit) ?: return null
         return getDeltaFileFromList(listofCommit)
     }
 
@@ -305,17 +303,22 @@ class GitUtilitary(val pathToRepo: String)  {
      */
     fun getDeltaFileFromList(listofCommit: List<NamedCommit>): DeltaHistory {
         var sumDeltaFile: DeltaHistory = DeltaHistory()
-        try{
+        try {
             if (listofCommit.size > 1) {
-                var newFile = retrievingFileFromSpecificCommit(listofCommit[0].revCommit.id.name, listofCommit[0].filePath).split("\n")
+                var newFile = retrievingFileFromSpecificCommit(listofCommit[0].revCommit.id.name, listofCommit[0].filePath)?.split("\n") ?: listOf()
                 for (i in 1..(listofCommit.size - 1)) {
-                    val oldFile = retrievingFileFromSpecificCommit(listofCommit[i].revCommit.id.name, listofCommit[i].filePath).split("\n")
-                    sumDeltaFile.sum(DiffComputing.computeDelta(oldFile, newFile))
-                    newFile = oldFile;
+                    val oldFile = retrievingFileFromSpecificCommit(listofCommit[i].revCommit.id.name, listofCommit[i].filePath)?.split("\n") ?: listOf()
+                    if (oldFile.size != 0) {
+                        sumDeltaFile.sum(DiffComputing.computeDelta(oldFile, newFile))
+                        newFile = oldFile;
+                    }
                 }
                 val oldFile = listOf<String>()
                 sumDeltaFile.sum(DiffComputing.computeDelta(oldFile, newFile))
-            }}catch(e: FileNotFoundException){e.printStackTrace()}
+            }
+        } catch(e: FileNotFoundException) {
+            e.printStackTrace()
+        }
         return sumDeltaFile
     }
 
@@ -381,7 +384,7 @@ class GitUtilitary(val pathToRepo: String)  {
     /**
      * Method to be called when work on git has been done
      */
-    fun close(){
+    fun close() {
         repo.close()
         git.close()
     }

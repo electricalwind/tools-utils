@@ -132,4 +132,51 @@ object MultiThreading {
             return resultList
         }
     }
+
+
+    /**
+     * Method to launch a function on a list in a Multithreaded way
+     *
+     * @param list list of [I] to handle
+     * @param function a function that takes an element of [list] and return a result
+     *
+     * @property I Input
+     * @property O Output
+     *
+     * @return a list of [O] element
+     */
+    fun <I, O> onFunctionWithListListOutput(list: List<I>, function: (I) -> List<O>, nbThread: Int): List<List<O>> {
+        val resultList = ArrayList<List<O>>()
+        val executor = Executors.newFixedThreadPool(nbThread)
+        try {
+            //Declaring Executors
+            val completionService: CompletionService<List<O>> = ExecutorCompletionService(executor)
+
+            //Sending
+            var count = 0
+            for (item in list) {
+                completionService.submit({ function(item) })
+                count++
+            }
+
+            //Receiving
+            var received = 0
+            while (received < count) {
+                val fut = completionService.take()
+                try {
+                    val result = fut.get()
+                    received++
+                    if (result != null)
+                        resultList.add(result)
+                } catch (e: ExecutionException) {
+                    e.printStackTrace()
+                }
+            }
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        } finally {
+            executor.shutdown()
+            return resultList
+        }
+    }
 }
