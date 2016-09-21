@@ -9,6 +9,7 @@ This library gather all utilitary methods that are used by the different modules
 * Regexp
 * Serialization 
 
+[Documentation](doc/)
 
 ## Git
 This module provide some useful function when trying to mine a git repository
