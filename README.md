@@ -1,6 +1,6 @@
 #Utils module
 
-This maven module gather all utilitary methods that are used across all the different modules of the bugs and vulnerabilities project and that could be used in other context.
+This library gather all utilitary methods that are used by the different modules of the bugs and vulnerabilities project and that could be used in other context.
 
 ## Content
 
@@ -34,10 +34,10 @@ This module provide some useful function when trying to mine a git repository
 * getCommitMessage
 * getTimeCommit
 
-###Diff
+### Diff
 This side module provides methods for computing unified diff or delta of between 2 versions of a file
 
-##Multithreading
+## Multithreading
 This object contains methods to launch a function on a list in a multithreaded way.
 So far, 3 distinct version exist:
 
@@ -49,7 +49,7 @@ So far, 3 distinct version exist:
     
  This multithreading function relies on the JAVA Executors and CompletionService
 
-##Regex
+## Regex
 This object gather several methods based on regexp:
 
 * extract url from a string
@@ -64,6 +64,11 @@ This object contains method to load/save list or map of Serializable object
 
 ## Note
 
-As other part of the project, this module is coded in Kotlin 1.0.0 and use Speck as a testing framework
+This library is coded in Kotlin 1.0.3 and use Speck as a testing framework
 
-Matthieu Jimenez - 2016
+## Bug and feature request
+
+Use the [github issue](https://github.com/electricalwind/bvcg/issues) page to report bugs or ask for new features
+
+## Licence
+The tool is open source and release under apache 2 Licence.
