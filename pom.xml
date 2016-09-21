@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>lu.jimenez.research</groupId>
-    <artifactId>bugsandvulnerabilities-utils</artifactId>
+    <groupId>lu.jimenez.research.tools</groupId>
+    <artifactId>utils</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -34,7 +34,7 @@
 
     <properties>
         <kotlin.version>1.0.0</kotlin.version>
-        <dokka.version>0.9.8</dokka.version>
+        <dokka.version>0.9.9</dokka.version>
         <spek.version>0.1.195</spek.version>
     </properties>
 
@@ -82,6 +82,30 @@
                         <goals>
                             <goal>dokka</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>1.9</version>
+                <configuration>
+                    <verbose>false</verbose>
+                    <organizationName>Matthieu Jimenez</organizationName>
+                    <inceptionYear>2016</inceptionYear>
+                    <projectName>Utilitary </projectName>
+                    <licenseName>apache_v2</licenseName>
+                    <extraExtensions>
+                        <kt>java</kt>
+                    </extraExtensions>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>first</id>
+                        <goals>
+                            <goal>update-file-header</goal>
+                        </goals>
+                        <phase>process-sources</phase>
                     </execution>
                 </executions>
             </plugin>

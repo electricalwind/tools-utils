@@ -1,29 +1,5 @@
-/////////////////////////////////////////////////////////////////////////////////////////
-//                 University of Luxembourg  -
-//                 Interdisciplinary center for Security and Trust (SnT)
-//                 Copyright © 2016 University of Luxembourg, SnT
-//
-//
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 3 of the License, or (at your option) any later version.
-//
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
-//
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-//
-//
-//
-//    Author: Matthieu Jimenez – SnT – matthieu.jimenez@uni.lu
-//
-//////////////////////////////////////////////////////////////////////////////////////////
-package lu.jimenez.research.bugsandvulnerabilities.utils
+
+package lu.jimenez.research.tools.utils
 
 import java.io.*
 
@@ -98,6 +74,27 @@ object Serialization {
 
     }
 
+    /**
+     * Saving to an object file a map of string object
+     *
+     * @param mapStringObject map of object using a string as a key
+     * @param path pah of the file in which we will save
+     */
+    fun saveMapData(mapStringObject: Map<Serializable, Serializable>, path: String) {
+        try {
+            val fos = FileOutputStream(path)
+            val oos = ObjectOutputStream(fos)
+            oos.writeObject(mapStringObject)
+            oos.close()
+            fos.close()
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+    }
+
 
     /**
      * Loading the data save in an object file
@@ -155,6 +152,27 @@ object Serialization {
         val read = ObjectInputStream(fileIn)
         try {
             val listFile = read.readObject() as Map<String, Any>
+            read.close()
+            fileIn.close()
+            return listFile
+        } catch(e: FileNotFoundException) {
+            e.printStackTrace()
+            return null
+        }
+
+    }
+    /**
+     * Loading the data save in an object file
+     * Reverse of saveMapStringData
+     *
+     * @param path path of the file
+     * @return map of string object
+     */
+    fun loadMapData(path: String): Map<Serializable, Serializable>? {
+        val fileIn = FileInputStream(path)
+        val read = ObjectInputStream(fileIn)
+        try {
+            val listFile = read.readObject() as Map<Serializable, Serializable>
             read.close()
             fileIn.close()
             return listFile
