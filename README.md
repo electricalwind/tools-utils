@@ -63,6 +63,13 @@ This object gather several methods based on regexp:
 ## Serialization
 This object contains method to load/save list or map of Serializable object
 
+
+## Normalizing Path Folder 
+This object contains a single method to normalize the path of a folder, i.e., adding the right separator at the end if missing
+
+## Ressource Extractor
+This object contains two method one for downloading a resource from the internet, the other to unzip a file
+
 ## Note
 
 This library is coded in Kotlin 1.0.3 and use Speck as a testing framework
