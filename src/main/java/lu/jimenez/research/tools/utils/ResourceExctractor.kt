@@ -81,7 +81,7 @@ object ResourceExctractor {
         val fis = FileInputStream(filePath)
         val checksum = CheckedInputStream(fis, Adler32())
         val zis = ZipInputStream(BufferedInputStream(checksum))
-        var entry: ZipEntry = zis.nextEntry
+        var entry: ZipEntry? = zis.nextEntry
         while (entry != null) {
             var count: Int
             val but = ByteArray(1024)
