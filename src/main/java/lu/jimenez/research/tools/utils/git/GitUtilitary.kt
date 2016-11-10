@@ -19,6 +19,7 @@
  */
 package lu.jimenez.research.tools.utils.git
 
+import lu.jimenez.research.tools.utils.NormalizingPathFolder
 import lu.jimenez.research.tools.utils.diff.DeltaHistory
 import lu.jimenez.research.tools.utils.diff.DiffComputing
 import org.eclipse.jgit.api.BlameCommand
@@ -46,13 +47,13 @@ import java.util.*
 /**
  * Git Utilitary class
  *
- * This class contains some useful Method some are just adaption from [jgit Cookbook][https://github.com/centic9/jgit-cookbook]
+ * This class contains some useful Method, most of them are just adaption from [jgit Cookbook][https://github.com/centic9/jgit-cookbook]
  *
  * @property pathToRepo path to the git repository to study
  *
  * @author Matthieu Jimenez
  */
-class GitUtilitary(val pathToRepo: String) {
+class GitUtilitary {
     val repo: Repository
     val git: Git
 
@@ -62,10 +63,27 @@ class GitUtilitary(val pathToRepo: String) {
      *
      * @throws [FileNotFoundException] if no git directory was found
      */
-    init {
+    constructor(pathToRepo: String) {
         git = Git.open(File(pathToRepo)) ?: throw FileNotFoundException("Can't manage to find the .git file")
         repo = git.repository
     }
+
+    /**
+     * clone and open a remote git repository
+     * should always be followed by a call to close when not needed anymore
+     *
+     * @throws [FileNotFoundException] if no git directory was found
+     */
+    constructor(urlremote : String, folderToCloneIn : String, bare: Boolean)  {
+        git = Git.cloneRepository()
+                .setURI( urlremote )
+                .setDirectory(File(NormalizingPathFolder.normalizing(folderToCloneIn)))
+                .setBare(bare)
+                .call()
+
+        repo = git.repository
+    }
+
 
 
     /**
